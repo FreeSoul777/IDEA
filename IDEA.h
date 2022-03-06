@@ -1,8 +1,13 @@
 #include "mathAlg.h"
+#ifndef IDEA_H
+#define IDEA_H
+#define BLOCK_SIZE 8
+#define ROUNDS 8
+#define KEY_SIZE 16
 
-static const uint8_t BLOCK_SIZE = 8;
-static const uint8_t ROUNDS = 8;
-static const uint8_t KEY_SIZE = 16;
+//static const uint8_t BLOCK_SIZE = 8;
+//static const uint8_t ROUNDS = 8;
+//static const uint8_t KEY_SIZE = 16;
 
 enum MODE{CFB, CBC, OFB, ECB};
 class IDEA {
@@ -10,9 +15,15 @@ private:
     vector<uint8_t> data;
     vector<uint8_t> key;
     vector<uint16_t> subKey;
+    vector<uint8_t> feedback;
     MODE mode;
     bool flag;
 public:
+    IDEA(string key) {
+        this->key = makeKey(key);
+        subKey = vector<uint16_t>(ROUNDS * 6 + 4);
+        generateSubkeys();
+    }
     IDEA(string key, string data) {
         this->data = makeKey(data);
         this->key = makeKey(key);
@@ -31,10 +42,19 @@ public:
         subKey = vector<uint16_t>(ROUNDS * 6 + 4);
         generateSubkeys();
     }
+    void setFeedBack(vector<uint8_t> feedback) {
+        this->feedback = feedback;
+    }
+    void setFeedBack(string feedback) {
+        this->feedback = makeKey(feedback);
+    }
     void setKey(string key) {
         this->key = makeKey(key);
         subKey = vector<uint16_t>(ROUNDS * 6 + 4);
         generateSubkeys();
+    }
+    void setData(vector<uint8_t> data) {
+        this->data = data;
     }
     void setData(string data) {
         this->data = makeKey(data);
@@ -54,3 +74,5 @@ public:
     void ofb();
     void cbc();
 };
+
+#endif
