@@ -107,9 +107,7 @@ void IDEA::crypt(vector<uint8_t>& data, size_t i) {
 }
 
 void IDEA::cfb() {
-    size_t i = 0;
-    vector<uint8_t> feedback = {key[2], key[1], key[0], key[5], key[7], key[4], key[13], key[14]};
-    vector<uint8_t> clone(8);
+    size_t i = 0;vector<uint8_t> clone(8);
     while(i < data.size()) {
         if(flag) {
             clone.clear();
@@ -144,7 +142,6 @@ void IDEA::ecb() {
 
 void IDEA::cbc() {
     size_t i = 0;
-    vector<uint8_t> feedback = {key[2], key[1], key[0], key[5], key[7], key[4], key[13], key[14]};
     if(!flag){
         while(i < data.size()) {
             for(size_t j = 0; j < BLOCK_SIZE; j++) {
@@ -181,7 +178,6 @@ void IDEA::cbc() {
 
 void IDEA::ofb() {
     size_t i = 0;
-    vector<uint8_t> feedback = {key[2], key[1], key[0], key[5], key[7], key[4], key[13], key[14]};
     while(i < data.size()) {
         crypt(feedback, i);
         for(size_t j = 0; j < BLOCK_SIZE; j++) {
@@ -192,5 +188,6 @@ void IDEA::ofb() {
     cout << endl << " OFB:\n ";
     for(auto c: data) cout << c << " ";
 }
+
 
 
