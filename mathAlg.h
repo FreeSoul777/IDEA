@@ -1,3 +1,5 @@
+#ifndef MATHALG_H
+#define MATHALG_H
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <stdio.h>
@@ -22,4 +24,6 @@ uint16_t multReversKey(uint16_t x);
 vector<uint8_t> makeKey(string charKey);
 
 uint16_t glue2Bytes(uint8_t a1, uint8_t a2);
+
+#endif
 
