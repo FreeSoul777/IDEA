@@ -65,6 +65,7 @@ public:
     vector<uint8_t> getDATA() {return data;}
     vector<uint8_t> getKey() {return key;}
     vector<uint16_t> getSubKey() {return subKey;}
+    vector<uint16_t> getFeedBack() {return feedback;}
 
 //    void crypt(vector<uint8_t>& data);
     void crypt(vector<uint8_t>& data, size_t i);
