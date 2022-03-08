@@ -9,13 +9,12 @@ void transform(string& a) {
         unsigned int x = stoul(s, nullptr, 16);
         b += (char) x;
     }
+    a.clear();
     a = b;
 }
 
 int main() {
     cout << "Hello! This is IDEA.\n";
-
-//    vector<uint8_t> feedback = {0xbb, 0xbb, 0xcc, 0xcc, 0x44, 0x44, 0x22, 0x22};
     string input, output;
     I:cout << "\nEnter the path to the file to be read: ";
     cin >> input;
@@ -45,15 +44,6 @@ int main() {
        else cout << "\nThe entered string exceeds the specified size. Please repeat the input: ";
    } while(true);
 
-    cout << "\nPlease enter a 64 bit feedback: ";
-    string feedback = "";
-    do {
-       getline(cin, feedback, '\n');
-       if(feedback[0] == '0' && feedback[1] == 'x' && feedback.size() == 18){transform(feedback); break;}
-       else if(feedback.size() == 8) break;
-       else cout << "\nThe entered string exceeds the specified size. Please repeat the input: ";
-   } while(true);
-
     MODE mode = CFB;
     int m = mode;
     cout << "\nPlease enter one of the modes (1=CFB, 2=CBC, 3=OFB, 4=ECB): ";
@@ -65,15 +55,30 @@ int main() {
         else goto M;
     }
 
+
+    string feedback = "";
+    if(mode != ECB){
+        cout << "\nPlease enter a 64 bit feedback: ";
+        do {
+            getline(cin, feedback, '\n');
+            if(feedback[0] == '0' && feedback[1] == 'x' && feedback.size() == 18){transform(feedback); break;}
+            else if(feedback.size() == 8) break;
+            else cout << "\nThe entered string exceeds the specified size. Please repeat the input: ";
+        } while(true);
+    }
+
     bool flag ;
     cout << "\nEncrypt or Decrypt? (1/0): ";
     cin >> flag;
 
-    IDEA idea(key);
+    IDEA idea;
+    idea.setKey(key);
+    idea.setMode(mode);
     idea.setFeedBack(feedback);
+    idea.setFlag(flag);
+    if((idea.getMode() == ECB || idea.getMode() == CBC) && idea.getFlag()) idea.invertSubkeys();
 
     vector<uint8_t> data;
-
     while(1) {
         uint8_t c;
         fin.read((char*)&c, sizeof(c));
@@ -82,7 +87,7 @@ int main() {
 
         if(data.size() == BLOCK_SIZE) {
             idea.setData(data);
-            idea.encrypt(mode, !flag);
+            idea.encrypt();
             data = idea.getDATA();
             for(size_t i = 0; i < data.size(); ++i) {
                 fout << data[i];
@@ -92,15 +97,13 @@ int main() {
     }
 
     if(!data.empty()){
-
         idea.setData(data);
-        idea.encrypt(mode, !flag);
+        idea.encrypt();
         data = idea.getDATA();
         for(size_t i = 0; i < data.size(); ++i) {
             fout.write((char*)&data[i], sizeof (uint8_t));
         }
         data.clear();
-
     }
 
     fin.close();

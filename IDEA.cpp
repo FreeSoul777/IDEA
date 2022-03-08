@@ -5,11 +5,11 @@ void IDEA::generateSubkeys() {
         throw std::runtime_error("Error: Key must be 128 bits in length.");
     }
 
-    uint16_t b1, b2;
     for (size_t i = 0; i < key.size() / 2; i++) {
         subKey[i] = glue2Bytes(key[2 * i], key[2 * i + 1]);
     }
 
+    uint16_t b1, b2;
     for (size_t i = key.size() / 2; i < subKey.size(); i++) {
         b1 = subKey[(i + 1) % 8 != 0 ? i - 7 : i - 15] << 9;
         b2 = subKey[(i + 2) % 8 < 2 ? i - 14 : i - 6] >> 7;
@@ -46,7 +46,7 @@ void IDEA::invertSubkeys() {
     subKey = reversSubkey;
 }
 
-void IDEA::encrypt(MODE mode, bool flag) {
+void IDEA::encrypt() {
     cout << endl << "\ndata.size: " << data.size();
     if(data.size() % BLOCK_SIZE != 0) {
         data.insert(data.end(), (BLOCK_SIZE - (data.size() % BLOCK_SIZE)), '0');
@@ -56,8 +56,6 @@ void IDEA::encrypt(MODE mode, bool flag) {
     if (data.size() % BLOCK_SIZE != 0){
         throw std::runtime_error("\ndata.size() % 8 != 0\n");
     }
-    this->flag = flag;
-    this->mode = mode;
     switch (this->mode) {
     case CFB: cfb(); break;
     case CBC: cbc(); break;
@@ -107,7 +105,8 @@ void IDEA::crypt(vector<uint8_t>& data, size_t i) {
 }
 
 void IDEA::cfb() {
-    size_t i = 0;vector<uint8_t> clone(8);
+    size_t i = 0;
+    vector<uint8_t> clone;
     while(i < data.size()) {
         if(flag) {
             clone.clear();
@@ -131,7 +130,7 @@ void IDEA::cfb() {
 
 void IDEA::ecb() {
     size_t i = 0;
-    if(flag) invertSubkeys();
+//    if(flag) invertSubkeys();
     while(i < data.size()) {
         crypt(data, i);
         i += 8;
@@ -155,7 +154,7 @@ void IDEA::cbc() {
         }
     }
     else {
-        invertSubkeys();
+//        invertSubkeys();
         vector<uint8_t> clone1, clone2;
         while(i < data.size()) {
             clone1.clear(); clone2.clear();
@@ -188,6 +187,5 @@ void IDEA::ofb() {
     cout << endl << " OFB:\n ";
     for(auto c: data) cout << c << " ";
 }
-
 
 

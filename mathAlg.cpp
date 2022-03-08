@@ -36,7 +36,7 @@ vector<uint8_t> makeKey(string charKey) {
 uint16_t glue2Bytes(uint8_t a1, uint8_t a2) {
     uint16_t b1 = static_cast<uint16_t> (a1);
     uint16_t b2 = static_cast<uint16_t> (a2);
-    b1 = (b1 & 0xFF) << 8;
-    b2 = b2 & 0xFF;
-    return (b1 | b2);
+    b1 = (b1 & 0xFF) << 8;  // xxxxxxxx00000000
+    b2 = b2 & 0xFF;         // 00000000xxxxxxxx
+    return (b1 | b2);       // xxxxxxxxxxxxxxxx
 }

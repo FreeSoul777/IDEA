@@ -26,4 +26,3 @@ vector<uint8_t> makeKey(string charKey);
 uint16_t glue2Bytes(uint8_t a1, uint8_t a2);
 
 #endif
-

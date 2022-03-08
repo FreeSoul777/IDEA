@@ -5,10 +5,6 @@
 #define ROUNDS 8
 #define KEY_SIZE 16
 
-//static const uint8_t BLOCK_SIZE = 8;
-//static const uint8_t ROUNDS = 8;
-//static const uint8_t KEY_SIZE = 16;
-
 enum MODE{CFB, CBC, OFB, ECB};
 class IDEA {
 private:
@@ -19,10 +15,13 @@ private:
     MODE mode;
     bool flag;
 public:
-    IDEA(string key) {
-        this->key = makeKey(key);
-        subKey = vector<uint16_t>(ROUNDS * 6 + 4);
-        generateSubkeys();
+    IDEA() {
+        this->key.clear();
+        this->data.clear();
+        this->subKey.clear();
+        this->feedback.clear();
+        this->mode = ECB;
+        this->flag = true;
     }
     IDEA(string key, string data) {
         this->data = makeKey(data);
@@ -42,6 +41,7 @@ public:
         subKey = vector<uint16_t>(ROUNDS * 6 + 4);
         generateSubkeys();
     }
+
     void setFeedBack(vector<uint8_t> feedback) {
         this->feedback = feedback;
     }
@@ -59,17 +59,20 @@ public:
     void setData(string data) {
         this->data = makeKey(data);
     }
-    void generateSubkeys();
-    void invertSubkeys();
-    void encrypt(MODE mode, bool flag);
+    void setMode(MODE mode) {this->mode = mode;}
+    void setFlag(bool flag) {this->flag = flag;}
+
     vector<uint8_t> getDATA() {return data;}
     vector<uint8_t> getKey() {return key;}
+    vector<uint8_t> getFeedback() {return feedback;}
     vector<uint16_t> getSubKey() {return subKey;}
-    vector<uint16_t> getFeedBack() {return feedback;}
+    MODE getMode() {return mode;}
+    bool getFlag() {return flag;}
 
-//    void crypt(vector<uint8_t>& data);
     void crypt(vector<uint8_t>& data, size_t i);
-
+    void generateSubkeys();
+    void invertSubkeys();
+    void encrypt();
     void cfb();
     void ecb();
     void ofb();
